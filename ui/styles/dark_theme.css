@@ -1,0 +1,55 @@
+/* Tema oscuro para la aplicación usando la paleta recomendada */
+
+:root {
+    --primary-color: #2C73D2;
+    --success-color: #2E7D32;
+    --white: #FFFFFF;
+    --light-gray: #F1F1F1;
+    --text-gray: #2E2E2E;
+    --danger-color: #DC3545;
+    --accent-yellow: #F9C846;
+    --bg-color: #121417;
+    --panel-color: #1b1f23;
+    --muted-text: #aeb6bf;
+}
+
+/* Aplicar tema oscuro a todos los widgets (solo reglas generales, ttk puede requerir mapping) */
+* {
+    background-color: var(--bg-color);
+    color: var(--muted-text);
+}
+
+Main.TFrame {
+    background-color: var(--panel-color);
+}
+
+Menu.TFrame {
+    background-color: #14181c;
+}
+
+.TEntry, .TCombobox {
+    background-color: #121417;
+    border-color: #2a2f33;
+    color: var(--white);
+}
+
+.Table.Treeview {
+    background-color: #121417;
+    color: var(--white);
+}
+
+.Table.Treeview.Heading {
+    background-color: var(--primary-color);
+}
+
+Primary.TButton {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+
+Success.TButton {
+    background-color: var(--success-color);
+    color: var(--white);
+}
+
+/* ... resto de estilos para tema oscuro ... */
