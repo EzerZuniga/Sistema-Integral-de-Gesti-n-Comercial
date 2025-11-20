@@ -1,55 +1,40 @@
-/* Tema oscuro para la aplicación usando la paleta recomendada */
+:root removed and variables inlined
 
-:root {
-    --primary-color: #2C73D2;
-    --success-color: #2E7D32;
-    --white: #FFFFFF;
-    --light-gray: #F1F1F1;
-    --text-gray: #2E2E2E;
-    --danger-color: #DC3545;
-    --accent-yellow: #F9C846;
-    --bg-color: #121417;
-    --panel-color: #1b1f23;
-    --muted-text: #aeb6bf;
-}
-
-/* Aplicar tema oscuro a todos los widgets (solo reglas generales, ttk puede requerir mapping) */
 * {
-    background-color: var(--bg-color);
-    color: var(--muted-text);
+	background-color: #121417;
+	color: #aeb6bf;
 }
 
 Main.TFrame {
-    background-color: var(--panel-color);
+	background-color: #1b1f23;
 }
 
 Menu.TFrame {
-    background-color: #14181c;
+	background-color: #14181c;
 }
 
-.TEntry, .TCombobox {
-    background-color: #121417;
-    border-color: #2a2f33;
-    color: var(--white);
+.TEntry,
+.TCombobox {
+	background-color: #121417;
+	border-color: #2a2f33;
+	color: #FFFFFF;
 }
 
 .Table.Treeview {
-    background-color: #121417;
-    color: var(--white);
+	background-color: #121417;
+	color: #FFFFFF;
 }
 
 .Table.Treeview.Heading {
-    background-color: var(--primary-color);
+	background-color: #2C73D2;
 }
 
 Primary.TButton {
-    background-color: var(--primary-color);
-    color: var(--white);
+	background-color: #2C73D2;
+	color: #FFFFFF;
 }
 
 Success.TButton {
-    background-color: var(--success-color);
-    color: var(--white);
+	background-color: #2E7D32;
+	color: #FFFFFF;
 }
-
-/* ... resto de estilos para tema oscuro ... */

@@ -96,14 +96,20 @@ class Utils:
     def center_window(window, width: int = None, height: int = None):
         """Centrar ventana en la pantalla"""
         window.update_idletasks()
+        # If explicit size provided, use it for positioning (don't override)
         if width and height:
-            window.geometry(f"{width}x{height}")
-        
-        width = window.winfo_width()
-        height = window.winfo_height()
-        x = (window.winfo_screenwidth() // 2) - (width // 2)
-        y = (window.winfo_screenheight() // 2) - (height // 2)
-        window.geometry(f"{width}x{height}+{x}+{y}")
+            w = width
+            h = height
+        else:
+            w = window.winfo_width()
+            h = window.winfo_height()
+
+        x = (window.winfo_screenwidth() // 2) - (w // 2)
+        y = (window.winfo_screenheight() // 2) - (h // 2)
+        if width and height:
+            window.geometry(f"{width}x{height}+{x}+{y}")
+        else:
+            window.geometry(f"{w}x{h}+{x}+{y}")
 
 # Instancia global
 utils = Utils()

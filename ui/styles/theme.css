@@ -1,186 +1,161 @@
-/* Estilos principales para la aplicación Doña Rosa */
-
-/* Paleta recomendada */
-:root {
-    --primary-color: #2C73D2; /* Azul profesional */
-    --success-color: #2E7D32; /* Verde comercio */
-    --white: #FFFFFF;
-    --light-gray: #F1F1F1;
-    --text-gray: #2E2E2E;
-    --danger-color: #DC3545;
-    --accent-yellow: #F9C846;
+*{
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* Configuración de estilos de ttk */
-* {
-    font-family: "Segoe UI", "Arial", sans-serif;
+.TButton{
+    padding:8px 16px;
+    border-radius:4px;
+    font-weight:700;
 }
 
-/* Botones primarios */
-.TButton {
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: bold;
+Primary.TButton{
+    background-color:#2C73D2;
+    color:#FFFFFF;
+    border:1px solid #2C73D2;
 }
 
-Primary.TButton {
-    background-color: var(--primary-color);
-    color: white;
-    border: 1px solid var(--primary-color);
+Primary.TButton:hover{
+    background-color:#2980b9;
 }
 
-Primary.TButton:hover {
-    background-color: #2980b9;
+Success.TButton{
+    background-color:#2E7D32;
+    color:#FFFFFF;
+    border:1px solid #2E7D32;
 }
 
-Success.TButton {
-    background-color: var(--success-color);
-    color: white;
-    border: 1px solid var(--success-color);
+Success.TButton:hover{
+    background-color:#219a52;
 }
 
-Success.TButton:hover {
-    background-color: #219a52;
+Danger.TButton{
+    background-color:#DC3545;
+    color:#FFFFFF;
+    border:1px solid #DC3545;
 }
 
-Danger.TButton {
-    background-color: var(--danger-color);
-    color: white;
-    border: 1px solid var(--danger-color);
+Danger.TButton:hover{
+    background-color:#c0392b;
 }
 
-Danger.TButton:hover {
-    background-color: #c0392b;
+Secondary.TButton{
+    background-color:#1a252f;
+    color:#FFFFFF;
+    border:1px solid #1a252f;
 }
 
-Secondary.TButton {
-    background-color: var(--secondary-color);
-    color: white;
-    border: 1px solid var(--secondary-color);
+Secondary.TButton:hover{
+    background-color:#1a252f;
 }
 
-Secondary.TButton:hover {
-    background-color: #1a252f;
+.TEntry{
+    padding:8px 12px;
+    border:1px solid #d1d5d9;
+    border-radius:6px;
+    font-size:14px;
+    background:#FFFFFF;
+    color:#2E2E2E;
 }
 
-/* Campos de entrada */
-.TEntry {
-    padding: 8px 12px;
-    border: 1px solid #d1d5d9;
-    border-radius: 6px;
-    font-size: 14px;
-    background: var(--white);
-    color: var(--text-gray);
+.TEntry:focus{
+    border-color:#2C73D2;
+    outline:0;
 }
 
-.TEntry:focus {
-    border-color: var(--primary-color);
-    outline: none;
+.TCombobox{
+    padding:8px 12px;
+    border:1px solid #bdc3c7;
+    border-radius:4px;
 }
 
-/* Combobox */
-.TCombobox {
-    padding: 8px 12px;
-    border: 1px solid #bdc3c7;
-    border-radius: 4px;
+.TCombobox:focus{
+    border-color:#2C73D2;
 }
 
-.TCombobox:focus {
-    border-color: var(--primary-color);
+Main.TFrame{
+    background-color:#f8f9fa;
 }
 
-/* Frames */
-Main.TFrame {
-    background-color: #f8f9fa;
+Menu.TFrame{
+    background-color:#1a252f;
 }
 
-Menu.TFrame {
-    background-color: var(--secondary-color);
+Title.TLabel{
+    font-size:22px;
+    font-weight:700;
+    color:#2E2E2E;
 }
 
-/* Labels */
-Title.TLabel {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-gray);
+Subtitle.TLabel{
+    font-size:13px;
+    font-weight:400;
+    color:#67707a;
 }
 
-Subtitle.TLabel {
-    font-size: 13px;
-    font-weight: 400;
-    color: #67707a;
+Normal.TLabel{
+    font-size:14px;
+    color:#2c3e50;
 }
 
-Normal.TLabel {
-    font-size: 14px;
-    color: #2c3e50;
+Table.Treeview{
+    background-color:#FFFFFF;
+    border:1px solid #bdc3c7;
 }
 
-/* Treeview (Tablas) */
-Table.Treeview {
-    background-color: white;
-    border: 1px solid #bdc3c7;
+Table.Treeview.Heading{
+    background-color:#2C73D2;
+    color:#FFFFFF;
+    font-weight:700;
+    padding:8px;
 }
 
-Table.Treeview.Heading {
-    background-color: var(--primary-color);
-    color: var(--white);
-    font-weight: bold;
-    padding: 8px;
+Table.Treeview row{
+    padding:4px;
 }
 
-Table.Treeview row {
-    padding: 4px;
+Table.Treeview row:selected{
+    background-color:#2C73D2;
+    color:#FFFFFF;
 }
 
-Table.Treeview row:selected {
-    background-color: var(--primary-color);
-    color: white;
+TScrollbar{
+    background-color:#ecf0f1;
 }
 
-/* Scrollbars */
-TScrollbar {
-    background-color: #ecf0f1;
+TScrollbar:hover{
+    background-color:#bdc3c7;
 }
 
-TScrollbar:hover {
-    background-color: #bdc3c7;
+Progress.Horizontal.TProgressbar{
+    background-color:#2C73D2;
+    border:none;
 }
 
-/* Progressbar */
-Progress.Horizontal.TProgressbar {
-    background-color: var(--primary-color);
-    border: none;
+Progress.Horizontal.TProgressbar trough{
+    background-color:#ecf0f1;
+    border:none;
+    border-radius:2px;
 }
 
-Progress.Horizontal.TProgressbar trough {
-    background-color: #ecf0f1;
-    border: none;
-    border-radius: 2px;
+TSeparator{
+    background-color:#bdc3c7;
 }
 
-/* Separators */
-TSeparator {
-    background-color: #bdc3c7;
+TNotebook{
+    background-color:#FFFFFF;
 }
 
-/* Notebook (Pestañas) */
-TNotebook {
-    background-color: white;
+TNotebook.Tab{
+    padding:8px 16px;
+    background-color:#ecf0f1;
+    border:1px solid #bdc3c7;
 }
 
-TNotebook.Tab {
-    padding: 8px 16px;
-    background-color: #ecf0f1;
-    border: 1px solid #bdc3c7;
+TNotebook.Tab:selected{
+    background-color:#2C73D2;
+    color:#FFFFFF;
 }
 
-TNotebook.Tab:selected {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-/* Checkbuttons y Radiobuttons */
-TCheckbutton, TRadiobutton {
-    font-size: 14px;
+TCheckbutton, TRadiobutton{
+    font-size:14px;
 }

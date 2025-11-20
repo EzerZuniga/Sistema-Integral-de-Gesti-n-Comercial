@@ -58,3 +58,80 @@ class ProductoService:
         except Exception as e:
             logger.error(f"Error obteniendo productos bajo stock: {e}")
             raise DatabaseError("Error al obtener productos bajo stock")
+
+    @staticmethod
+    def crear_producto(producto: Producto):
+        """Insertar un nuevo producto en la base de datos y retornar su id."""
+        try:
+            query = """
+                INSERT INTO productos (
+                    codigo, nombre, descripcion, categoria,
+                    precio_compra, precio_venta, stock_actual,
+                    stock_minimo, stock_maximo, proveedor_id, activo
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """
+            params = (
+                producto.codigo,
+                producto.nombre,
+                producto.descripcion,
+                producto.categoria,
+                producto.precio_compra,
+                producto.precio_venta,
+                producto.stock_actual,
+                producto.stock_minimo,
+                producto.stock_maximo,
+                producto.proveedor_id,
+                1 if producto.activo else 0
+            )
+            new_id = db.execute_query(query, params)
+            logger.info(f"Producto creado con id {new_id}")
+            return new_id
+        except Exception as e:
+            logger.error(f"Error creando producto: {e}")
+            raise DatabaseError("Error al crear producto")
+
+    @staticmethod
+    def actualizar_producto(producto_id: int, **fields):
+        """Actualizar campos de un producto. Campos pasados como kwargs."""
+        try:
+            if not fields:
+                return True
+
+            # Mapear campos permitidos a columnas
+            allowed = {
+                'codigo': 'codigo',
+                'nombre': 'nombre',
+                'descripcion': 'descripcion',
+                'categoria': 'categoria',
+                'precio_compra': 'precio_compra',
+                'precio_venta': 'precio_venta',
+                'stock_actual': 'stock_actual',
+                'stock_minimo': 'stock_minimo',
+                'stock_maximo': 'stock_maximo',
+                'proveedor_id': 'proveedor_id',
+                'activo': 'activo'
+            }
+
+            set_clauses = []
+            params = []
+            for key, value in fields.items():
+                if key in allowed:
+                    set_clauses.append(f"{allowed[key]} = ?")
+                    # Ensure boolean is stored as int
+                    if key == 'activo':
+                        params.append(1 if value else 0)
+                    else:
+                        params.append(value)
+
+            if not set_clauses:
+                return True
+
+            query = f"UPDATE productos SET {', '.join(set_clauses)} WHERE id = ?"
+            params.append(producto_id)
+
+            db.execute_query(query, tuple(params))
+            logger.info(f"Producto {producto_id} actualizado: {fields}")
+            return True
+        except Exception as e:
+            logger.error(f"Error actualizando producto {producto_id}: {e}")
+            raise DatabaseError("Error al actualizar producto")

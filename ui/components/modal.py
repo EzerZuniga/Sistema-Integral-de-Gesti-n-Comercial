@@ -4,14 +4,14 @@ from core.utils import utils
 
 class Modal:
     """Modal/dialogo reutilizable"""
-    
-    def __init__(self, parent, title: str, width: int = 400, height: int = 300):
+
+    def __init__(self, parent, title: str, width: int = 600, height: int = 420):
         self.parent = parent
         self.title = title
         self.width = width
         self.height = height
         self.result = None
-        
+
         self._create_modal()
     
     def _create_modal(self):
@@ -20,9 +20,11 @@ class Modal:
         self.modal.title(self.title)
         self.modal.transient(self.parent)
         self.modal.grab_set()
-        self.modal.resizable(False, False)
+        # Allow the modal to be resized freely; set a sensible minimum
+        self.modal.resizable(True, True)
+        self.modal.minsize(self.width, self.height)
         
-        # Centrar modal
+        # Centrar modal y aplicar tamaño solicitado
         utils.center_window(self.modal, self.width, self.height)
         
         # Frame principal
@@ -40,20 +42,29 @@ class Modal:
         """Crear botones del modal"""
         button_frame = ttk.Frame(parent)
         button_frame.pack(fill="x", pady=(10, 0))
-        
-        ttk.Button(
+
+        # Spacer to push buttons to the right but leave central space
+        spacer = ttk.Frame(button_frame)
+        spacer.pack(side="left", fill="x", expand=True)
+
+        # Use larger, padded buttons so they are not ajustados
+        cancel_btn = ttk.Button(
             button_frame,
             text="Cancelar",
             command=self._on_cancel,
-            style="Secondary.TButton"
-        ).pack(side="right", padx=5)
-        
-        ttk.Button(
+            style="Secondary.TButton",
+            width=12
+        )
+        cancel_btn.pack(side="right", padx=(8, 12), ipadx=6, ipady=4)
+
+        accept_btn = ttk.Button(
             button_frame,
             text="Aceptar",
             command=self._on_accept,
-            style="Primary.TButton"
-        ).pack(side="right", padx=5)
+            style="Primary.TButton",
+            width=12
+        )
+        accept_btn.pack(side="right", padx=(8, 12), ipadx=6, ipady=4)
     
     def _on_accept(self):
         """Manejar aceptación del modal"""
@@ -81,10 +92,10 @@ class Modal:
 
 class ConfirmModal(Modal):
     """Modal de confirmación simple"""
-    
+
     def __init__(self, parent, title: str, message: str):
         self.message = message
-        super().__init__(parent, title, 300, 150)
+        super().__init__(parent, title, 420, 180)
     
     def _create_modal(self):
         """Crear modal de confirmación"""
@@ -106,11 +117,12 @@ class ConfirmModal(Modal):
 
 class InputModal(Modal):
     """Modal para entrada de datos"""
-    
+
     def __init__(self, parent, title: str, fields: list):
         self.fields = fields
         self.entries = {}
-        super().__init__(parent, title, 400, 200)
+        # Use a larger default size to make the form more readable
+        super().__init__(parent, title, 760, 460)
     
     def _create_modal(self):
         """Crear modal de entrada"""
@@ -125,9 +137,10 @@ class InputModal(Modal):
             ).grid(row=i, column=0, sticky="w", pady=5, padx=5)
             
             if field['type'] == 'entry':
+                # Let the entry expand and use a larger default width
                 entry = ttk.Entry(
                     self.content_frame,
-                    width=30,
+                    width=40,
                     show=field.get('show')
                 )
                 entry.grid(row=i, column=1, sticky="ew", pady=5, padx=5)
@@ -139,7 +152,7 @@ class InputModal(Modal):
                 combobox = ttk.Combobox(
                     self.content_frame,
                     values=field['values'],
-                    width=27,
+                    width=38,
                     state="readonly"
                 )
                 combobox.grid(row=i, column=1, sticky="ew", pady=5, padx=5)

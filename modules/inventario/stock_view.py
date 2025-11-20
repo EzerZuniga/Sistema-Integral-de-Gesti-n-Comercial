@@ -363,7 +363,10 @@ class StockView(BaseView):
             return
         
         # Buscar producto completo
-        producto_id = selected['id']
+        try:
+            producto_id = int(selected['id'])
+        except Exception:
+            producto_id = selected['id']
         producto = next((p for p in self.productos if p.id == producto_id), None)
         
         if not producto:
@@ -515,7 +518,10 @@ class StockView(BaseView):
             self.show_message("Advertencia", "Seleccione un producto para ajustar stock", "warning")
             return
         
-        producto_id = selected['id']
+        try:
+            producto_id = int(selected['id'])
+        except Exception:
+            producto_id = selected['id']
         producto = next((p for p in self.productos if p.id == producto_id), None)
         
         if not producto:
@@ -577,7 +583,10 @@ class StockView(BaseView):
             self.show_message("Advertencia", "Seleccione un producto para ver movimientos", "warning")
             return
         
-        producto_id = selected['id']
+        try:
+            producto_id = int(selected['id'])
+        except Exception:
+            producto_id = selected['id']
         producto = next((p for p in self.productos if p.id == producto_id), None)
         
         if not producto:
@@ -685,7 +694,10 @@ class StockView(BaseView):
             self.show_message("Advertencia", "Seleccione un producto para ver detalles", "warning")
             return
         
-        producto_id = selected['id']
+        try:
+            producto_id = int(selected['id'])
+        except Exception:
+            producto_id = selected['id']
         producto = next((p for p in self.productos if p.id == producto_id), None)
         
         if not producto:
