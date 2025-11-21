@@ -10,7 +10,7 @@ class Usuario:
     password_hash: str = ""
     nombre: str = ""
     email: str = ""
-    rol: str = "vendedor"  # admin, vendedor
+    rol: str = "trabajador"  # admin, trabajador
     activo: bool = True
     created_at: Optional[datetime] = None
     
@@ -35,7 +35,7 @@ class Usuario:
             password_hash=data.get('password_hash', ''),
             nombre=data.get('nombre', ''),
             email=data.get('email', ''),
-            rol=data.get('rol', 'vendedor'),
+            rol=data.get('rol', 'trabajador'),
             activo=bool(data.get('activo', True)),
             created_at=datetime.fromisoformat(data['created_at']) if data.get('created_at') else None
         )

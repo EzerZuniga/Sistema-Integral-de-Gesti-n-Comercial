@@ -1,161 +1,179 @@
+:root{
+    --color-primary: #2C73D2;
+    --color-primary-600: #2566b8;
+    --color-success: #2E7D32;
+    --color-danger: #DC3545;
+    --color-surface: #FFFFFF;
+    --color-muted: #67707a;
+    --color-text: #2E2E2E;
+    --color-panel: #f8f9fa;
+    --color-menu: #1a252f;
+    --border: #bdc3c7;
+    --radius: 6px;
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 12px;
+    --font-base: "Segoe UI", Arial, sans-serif;
+}
+
 *{
-    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: var(--font-base);
 }
 
 .TButton{
-    padding:8px 16px;
+    padding:var(--spacing-sm) var(--spacing-md);
     border-radius:4px;
     font-weight:700;
 }
 
-Primary.TButton{
-    background-color:#2C73D2;
-    color:#FFFFFF;
-    border:1px solid #2C73D2;
+.Primary.TButton{
+    background-color:var(--color-primary);
+    color:var(--color-surface);
+    border:1px solid var(--color-primary);
 }
 
-Primary.TButton:hover{
-    background-color:#2980b9;
+.Primary.TButton:hover, .Primary.TButton:active{
+    background-color:var(--color-primary-600);
 }
 
-Success.TButton{
-    background-color:#2E7D32;
-    color:#FFFFFF;
-    border:1px solid #2E7D32;
+.Success.TButton{
+    background-color:var(--color-success);
+    color:var(--color-surface);
+    border:1px solid var(--color-success);
 }
 
-Success.TButton:hover{
+.Success.TButton:hover{
     background-color:#219a52;
 }
 
-Danger.TButton{
-    background-color:#DC3545;
-    color:#FFFFFF;
-    border:1px solid #DC3545;
+.Danger.TButton{
+    background-color:var(--color-danger);
+    color:var(--color-surface);
+    border:1px solid var(--color-danger);
 }
 
-Danger.TButton:hover{
+.Danger.TButton:hover{
     background-color:#c0392b;
 }
 
-Secondary.TButton{
-    background-color:#1a252f;
-    color:#FFFFFF;
-    border:1px solid #1a252f;
+.Secondary.TButton{
+    background-color:var(--color-menu);
+    color:var(--color-surface);
+    border:1px solid var(--color-menu);
 }
 
-Secondary.TButton:hover{
-    background-color:#1a252f;
+.Secondary.TButton:hover{
+    background-color:rgba(26,37,47,0.95);
 }
 
 .TEntry{
-    padding:8px 12px;
+    padding:var(--spacing-sm) var(--spacing-md);
     border:1px solid #d1d5d9;
-    border-radius:6px;
+    border-radius:var(--radius);
     font-size:14px;
-    background:#FFFFFF;
-    color:#2E2E2E;
+    background:var(--color-surface);
+    color:var(--color-text);
 }
 
 .TEntry:focus{
-    border-color:#2C73D2;
-    outline:0;
+    border-color:var(--color-primary);
+    outline:3px solid rgba(44,115,210,0.12);
 }
 
 .TCombobox{
-    padding:8px 12px;
-    border:1px solid #bdc3c7;
+    padding:var(--spacing-sm) var(--spacing-md);
+    border:1px solid var(--border);
     border-radius:4px;
 }
 
 .TCombobox:focus{
-    border-color:#2C73D2;
+    border-color:var(--color-primary);
 }
 
-Main.TFrame{
-    background-color:#f8f9fa;
+.Main.TFrame{
+    background-color:var(--color-panel);
 }
 
-Menu.TFrame{
-    background-color:#1a252f;
+.Menu.TFrame{
+    background-color:var(--color-menu);
 }
 
-Title.TLabel{
+.Title.TLabel{
     font-size:22px;
     font-weight:700;
-    color:#2E2E2E;
+    color:var(--color-text);
 }
 
-Subtitle.TLabel{
+.Subtitle.TLabel{
     font-size:13px;
     font-weight:400;
-    color:#67707a;
+    color:var(--color-muted);
 }
 
-Normal.TLabel{
+.Normal.TLabel{
     font-size:14px;
     color:#2c3e50;
 }
 
-Table.Treeview{
-    background-color:#FFFFFF;
-    border:1px solid #bdc3c7;
+.Table.Treeview{
+    background-color:var(--color-surface);
+    border:1px solid var(--border);
 }
 
-Table.Treeview.Heading{
-    background-color:#2C73D2;
-    color:#FFFFFF;
+.Table.Treeview.Heading{
+    background-color:var(--color-primary);
+    color:var(--color-surface);
     font-weight:700;
     padding:8px;
 }
 
-Table.Treeview row{
-    padding:4px;
+.Table.Treeview row{
+    padding:var(--spacing-xs);
 }
 
-Table.Treeview row:selected{
-    background-color:#2C73D2;
-    color:#FFFFFF;
+.Table.Treeview row:selected{
+    background-color:var(--color-primary);
+    color:var(--color-surface);
 }
 
-TScrollbar{
+.TScrollbar{
     background-color:#ecf0f1;
 }
 
-TScrollbar:hover{
+.TScrollbar:hover{
     background-color:#bdc3c7;
 }
 
-Progress.Horizontal.TProgressbar{
-    background-color:#2C73D2;
+.Progress.Horizontal.TProgressbar{
+    background-color:var(--color-primary);
     border:none;
 }
 
-Progress.Horizontal.TProgressbar trough{
+.Progress.Horizontal.TProgressbar trough{
     background-color:#ecf0f1;
     border:none;
     border-radius:2px;
 }
 
-TSeparator{
-    background-color:#bdc3c7;
+.TSeparator{
+    background-color:var(--border);
 }
 
-TNotebook{
-    background-color:#FFFFFF;
+.TNotebook{
+    background-color:var(--color-surface);
 }
 
-TNotebook.Tab{
+.TNotebook.Tab{
     padding:8px 16px;
     background-color:#ecf0f1;
-    border:1px solid #bdc3c7;
+    border:1px solid var(--border);
 }
 
-TNotebook.Tab:selected{
-    background-color:#2C73D2;
-    color:#FFFFFF;
+.TNotebook.Tab:selected{
+    background-color:var(--color-primary);
+    color:var(--color-surface);
 }
 
-TCheckbutton, TRadiobutton{
+.TCheckbutton, .TRadiobutton{
     font-size:14px;
 }

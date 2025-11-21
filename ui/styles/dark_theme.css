@@ -1,40 +1,34 @@
-:root removed and variables inlined
+/* Dark theme: override key variables from light theme */
+
+:root{
+	--color-primary: #2C73D2;
+	--color-primary-600: #2566b8;
+	--color-success: #2E7D32;
+	--color-danger: #DC3545;
+	--color-surface: #0f1315;
+	--color-muted: #9aa4ad;
+	--color-text: #e6eaee;
+	--color-panel: #1b1f23;
+	--color-menu: #0f1417;
+	--border: #2a2f33;
+}
 
 * {
-	background-color: #121417;
-	color: #aeb6bf;
+	background-color: var(--color-surface);
+	color: var(--color-text);
 }
 
-Main.TFrame {
-	background-color: #1b1f23;
+Main.TFrame { background-color: var(--color-panel); }
+Menu.TFrame { background-color: var(--color-menu); }
+
+.TEntry, .TCombobox {
+	background-color: var(--color-surface);
+	border-color: var(--border);
+	color: var(--color-text);
 }
 
-Menu.TFrame {
-	background-color: #14181c;
-}
+.Table.Treeview { background-color: var(--color-surface); color: var(--color-text); }
+.Table.Treeview.Heading { background-color: var(--color-primary); color: var(--color-surface); }
 
-.TEntry,
-.TCombobox {
-	background-color: #121417;
-	border-color: #2a2f33;
-	color: #FFFFFF;
-}
-
-.Table.Treeview {
-	background-color: #121417;
-	color: #FFFFFF;
-}
-
-.Table.Treeview.Heading {
-	background-color: #2C73D2;
-}
-
-Primary.TButton {
-	background-color: #2C73D2;
-	color: #FFFFFF;
-}
-
-Success.TButton {
-	background-color: #2E7D32;
-	color: #FFFFFF;
-}
+.Primary.TButton { background-color: var(--color-primary); color: var(--color-surface); }
+.Success.TButton { background-color: var(--color-success); color: var(--color-surface); }

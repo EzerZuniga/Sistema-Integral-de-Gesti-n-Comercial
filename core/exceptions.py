@@ -18,6 +18,14 @@ class BusinessLogicError(DoñaRosaException):
     """Error de lógica de negocio"""
     pass
 
+class AuthorizationError(DoñaRosaException):
+    """Error de autorización / permisos"""
+    pass
+
 class InsufficientStockError(BusinessLogicError):
     """Error por stock insuficiente"""
+    pass
+
+class AuthorizationError(DoñaRosaException):
+    """Error de autorización / permisos"""
     pass

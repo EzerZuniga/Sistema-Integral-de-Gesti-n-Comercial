@@ -122,9 +122,12 @@ class MenuBar(ttk.Frame):
                     # crear toggle area
                     child_frame, toggle_fn = make_toggle(item['children'], frame)
 
-                    btn = ttk.Button(frame, text=item['text'] + ' ▾', command=toggle_fn, style="Menu.TButton")
-                    btn.pack(fill='x')
-                    self.buttons[item['route']] = btn
+                    btn = ttk.Button(frame, text=item['text'] + ' ▾', command=toggle_fn, style="Menu.TButton", takefocus=True)
+                    btn.pack(fill='x', padx=2)
+                    # allow keyboard activation
+                    btn.bind('<Return>', lambda e, b=btn: b.invoke())
+                    if item.get('route'):
+                        self.buttons[item['route']] = btn
 
                     # Render children
                     for child in item['children']:
@@ -132,18 +135,20 @@ class MenuBar(ttk.Frame):
                             continue
                         if child.get('requires_auth') and not AuthService.is_authenticated():
                             continue
-                        cbtn = ttk.Button(child_frame, text='  ' + child.get('text', ''), command=lambda r=child['route']: router.navigate_to(r), style='Menu.TButton')
-                        cbtn.pack(fill='x', pady=1)
+                        cbtn = ttk.Button(child_frame, text='  ' + child.get('text', ''), command=lambda r=child['route']: self._safe_navigate(r), style='Menu.TButton', takefocus=True)
+                        cbtn.pack(fill='x', pady=1, padx=(4,0))
+                        cbtn.bind('<Return>', lambda e, b=cbtn: b.invoke())
                         self.buttons[child['route']] = cbtn
                 else:
                     btn = ttk.Button(
                         nav_frame,
                         text=item['text'],
-                        command=lambda r=item['route']: router.navigate_to(r),
+                        command=lambda r=item['route']: self._safe_navigate(r),
                         style="Menu.TButton",
                         width=20
                     )
-                    btn.pack(fill="x", pady=2)
+                    btn.pack(fill="x", pady=2, padx=2)
+                    btn.bind('<Return>', lambda e, b=btn: b.invoke())
                     self.buttons[item['route']] = btn
         
         # Separador final
@@ -160,6 +165,7 @@ class MenuBar(ttk.Frame):
                 width=20
             )
             logout_btn.pack(side="bottom", fill="x", padx=5, pady=10)
+            logout_btn.bind('<Return>', lambda e, b=logout_btn: b.invoke())
     
     def _get_menu_items(self):
         """Obtener items del menú según permisos"""
@@ -210,6 +216,14 @@ class MenuBar(ttk.Frame):
                 logger.info("Sesión cerrada por el usuario")
         except Exception as e:
             logger.error(f"Error al cerrar sesión: {e}")
+
+    def _safe_navigate(self, route):
+        """Navegar de forma segura, atrapando excepciones del router."""
+        try:
+            from app.router import router as _router
+            _router.navigate_to(route)
+        except Exception as e:
+            logger.error(f"Error navegando a {route}: {e}")
     
     def update_menu(self):
         """Actualizar el menú (útil después de cambios de permisos)"""

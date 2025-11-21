@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+from ui.components.table import CustomTable
+from ui.components.button import CustomButton
 from datetime import datetime, timedelta
 from app.base_view import BaseView
 from services.venta_service import VentaService
@@ -49,7 +51,7 @@ class DashboardView(BaseView):
     def _create_kpi_cards(self, parent):
         """Crear tarjetas de KPIs"""
         # KPI 1: Ventas del día
-        self.kpi_sales_frame = ttk.LabelFrame(parent, text="Ventas Hoy", padding=10)
+        self.kpi_sales_frame = ttk.LabelFrame(parent, text="Ventas Hoy", padding=10, style='TLabelframe')
         self.kpi_sales_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
         
         self.sales_amount = ttk.Label(
@@ -67,7 +69,7 @@ class DashboardView(BaseView):
         ).pack()
         
         # KPI 2: Productos bajos stock
-        self.kpi_stock_frame = ttk.LabelFrame(parent, text="Stock Bajo", padding=10)
+        self.kpi_stock_frame = ttk.LabelFrame(parent, text="Stock Bajo", padding=10, style='TLabelframe')
         self.kpi_stock_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
         
         self.low_stock_count = ttk.Label(
@@ -85,7 +87,7 @@ class DashboardView(BaseView):
         ).pack()
         
         # KPI 3: Valor inventario
-        self.kpi_inventory_frame = ttk.LabelFrame(parent, text="Valor Inventario", padding=10)
+        self.kpi_inventory_frame = ttk.LabelFrame(parent, text="Valor Inventario", padding=10, style='TLabelframe')
         self.kpi_inventory_frame.grid(row=0, column=2, sticky="nsew", padx=5, pady=5)
         
         self.inventory_value = ttk.Label(
@@ -103,7 +105,7 @@ class DashboardView(BaseView):
         ).pack()
         
         # KPI 4: Ventas del mes
-        self.kpi_monthly_frame = ttk.LabelFrame(parent, text="Ventas Mes", padding=10)
+        self.kpi_monthly_frame = ttk.LabelFrame(parent, text="Ventas Mes", padding=10, style='TLabelframe')
         self.kpi_monthly_frame.grid(row=0, column=3, sticky="nsew", padx=5, pady=5)
         
         self.monthly_sales = ttk.Label(
@@ -122,7 +124,7 @@ class DashboardView(BaseView):
     
     def _create_recent_sales(self, parent):
         """Crear sección de ventas recientes"""
-        sales_frame = ttk.LabelFrame(parent, text="🛒 Ventas Recientes", padding=10)
+        sales_frame = ttk.LabelFrame(parent, text="🛒 Ventas Recientes", padding=10, style='TLabelframe')
         sales_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=5)
         sales_frame.columnconfigure(0, weight=1)
         sales_frame.rowconfigure(1, weight=1)
@@ -130,50 +132,25 @@ class DashboardView(BaseView):
         # Toolbar
         toolbar = ttk.Frame(sales_frame)
         toolbar.grid(row=0, column=0, sticky="ew", pady=(0, 10))
-        
-        ttk.Button(
-            toolbar,
-            text="Nueva Venta",
-            command=self._navigate_to_ventas,
-            style="Primary.TButton"
-        ).pack(side="left")
-        
-        ttk.Button(
-            toolbar,
-            text="Ver Todas",
-            command=self._view_all_sales,
-            style="Secondary.TButton"
-        ).pack(side="right")
-        
-        # Tabla de ventas
+
+        CustomButton(toolbar, text="Nueva Venta", command=self._navigate_to_ventas, style="Primary.TButton").pack(side="left")
+        CustomButton(toolbar, text="Ver Todas", command=self._view_all_sales, style="Secondary.TButton").pack(side="right")
+
+        # Tabla de ventas usando CustomTable para funcionalidad mejorada
         columns = [
             {'id': 'fecha', 'text': 'Fecha', 'width': 100},
             {'id': 'boleta', 'text': 'Boleta', 'width': 120},
             {'id': 'cliente', 'text': 'Cliente', 'width': 150},
             {'id': 'total', 'text': 'Total', 'width': 100}
         ]
-        
-        self.sales_table = ttk.Treeview(
-            sales_frame,
-            columns=[col['id'] for col in columns],
-            show='headings',
-            height=8
-        )
-        
-        for col in columns:
-            self.sales_table.heading(col['id'], text=col['text'])
-            self.sales_table.column(col['id'], width=col['width'])
-        
+
+        self.sales_table = CustomTable(sales_frame, columns=columns, height=8, show_toolbar=False)
+        # colocar usando grid para mantener consistencia con el frame padre
         self.sales_table.grid(row=1, column=0, sticky="nsew")
-        
-        # Scrollbar
-        scrollbar = ttk.Scrollbar(sales_frame, orient="vertical", command=self.sales_table.yview)
-        scrollbar.grid(row=1, column=1, sticky="ns")
-        self.sales_table.configure(yscrollcommand=scrollbar.set)
     
     def _create_low_stock_products(self, parent):
         """Crear sección de productos bajos en stock"""
-        stock_frame = ttk.LabelFrame(parent, text="⚠️ Productos por Reponer", padding=10)
+        stock_frame = ttk.LabelFrame(parent, text="⚠️ Productos por Reponer", padding=10, style='TLabelframe')
         stock_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
         stock_frame.columnconfigure(0, weight=1)
         stock_frame.rowconfigure(1, weight=1)
@@ -181,39 +158,19 @@ class DashboardView(BaseView):
         # Toolbar
         toolbar = ttk.Frame(stock_frame)
         toolbar.grid(row=0, column=0, sticky="ew", pady=(0, 10))
-        
-        ttk.Button(
-            toolbar,
-            text="Ver Inventario",
-            command=self._navigate_to_inventario,
-            style="Primary.TButton"
-        ).pack(side="left")
-        
-        # Tabla de productos bajos en stock
+
+        CustomButton(toolbar, text="Ver Inventario", command=self._navigate_to_inventario, style="Primary.TButton").pack(side="left")
+
+        # Tabla de productos bajos en stock (CustomTable)
         columns = [
             {'id': 'producto', 'text': 'Producto', 'width': 150},
             {'id': 'stock', 'text': 'Stock Actual', 'width': 100},
             {'id': 'minimo', 'text': 'Mínimo', 'width': 80},
             {'id': 'estado', 'text': 'Estado', 'width': 100}
         ]
-        
-        self.stock_table = ttk.Treeview(
-            stock_frame,
-            columns=[col['id'] for col in columns],
-            show='headings',
-            height=8
-        )
-        
-        for col in columns:
-            self.stock_table.heading(col['id'], text=col['text'])
-            self.stock_table.column(col['id'], width=col['width'])
-        
+
+        self.stock_table = CustomTable(stock_frame, columns=columns, height=8, show_toolbar=False)
         self.stock_table.grid(row=1, column=0, sticky="nsew")
-        
-        # Scrollbar
-        scrollbar = ttk.Scrollbar(stock_frame, orient="vertical", command=self.stock_table.yview)
-        scrollbar.grid(row=1, column=1, sticky="ns")
-        self.stock_table.configure(yscrollcommand=scrollbar.set)
     
     def _load_dashboard_data(self):
         """Cargar datos del dashboard"""

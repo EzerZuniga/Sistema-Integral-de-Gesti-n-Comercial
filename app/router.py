@@ -102,14 +102,16 @@ class Router:
                             main_window.attributes('-zoomed', True)
                         except Exception:
                             pass
-                    # Asegurar que ambas columnas crezcan para que el grid pueda ocupar toda la anchura
+                    # Mantener el menú en la columna 0 y la vista principal en la columna 1
+                    # La columna 0 (menu) debe mantenerse con peso 0 para no estirarse,
+                    # y la columna 1 con weight=1 para que la vista ocupe el espacio restante.
                     try:
-                        main_window.grid_columnconfigure(0, weight=1)
+                        main_window.grid_columnconfigure(0, weight=0)
                         main_window.grid_columnconfigure(1, weight=1)
                     except Exception:
                         pass
-                    # Mostrar la vista ocupando ambas columnas
-                    view.grid(row=0, column=0, columnspan=2, sticky="nsew")
+                    # Mostrar la vista en la columna 1 (al lado derecho del sidebar)
+                    view.grid(row=0, column=1, sticky="nsew")
                 else:
                     view.grid(row=0, column=1, sticky="nsew")
             except Exception:

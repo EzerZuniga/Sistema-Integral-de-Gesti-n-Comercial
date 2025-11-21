@@ -454,55 +454,55 @@ class TrabajadoresView(BaseView):
         
         self.show_message(f"Detalles: {trabajador.nombre}", detalles.strip(), "info")
 
-        def _preguntar_crear_cuenta(self, trabajador):
-            """Preguntar si se desea crear una cuenta de usuario para el trabajador"""
-            if not (AuthService.get_current_user() and AuthService.get_current_user().rol == 'admin'):
-                return
+    def _preguntar_crear_cuenta(self, trabajador):
+        """Preguntar si se desea crear una cuenta de usuario para el trabajador"""
+        if not (AuthService.get_current_user() and AuthService.get_current_user().rol == 'admin'):
+            return
 
-            if utils.show_message(self, f"Crear cuenta para {trabajador.nombre}", "¿Desea crear una cuenta de usuario para este trabajador?", "question"):
-                self._crear_cuenta_para_trabajador(trabajador)
-
-        def _crear_cuenta_para_trabajador(self, trabajador):
-            """Mostrar modal para crear cuenta y llamar a AuthService.crear_usuario"""
-            fields = [
-                {'name': 'username', 'label': 'Nombre de usuario *', 'type': 'entry', 'required': True, 'value': trabajador.rut.replace('.', '').replace('-', '')[:12]},
-                {'name': 'password', 'label': 'Contraseña *', 'type': 'password', 'required': True},
-                {'name': 'rol', 'label': 'Rol', 'type': 'combobox', 'values': ['vendedor', 'admin'], 'required': True, 'value': 'vendedor'}
-            ]
-
-            modal = InputModal(self, f"Crear cuenta para {trabajador.nombre}", fields)
-            result = modal.show()
-            if not result:
-                return
-
-            try:
-                usuario = Usuario(
-                    username=result['username'],
-                    nombre=f"{trabajador.nombre} {trabajador.apellido}",
-                    email=trabajador.email or '',
-                    rol=result.get('rol', 'vendedor'),
-                    activo=True
-                )
-                AuthService.crear_usuario(usuario, result['password'])
-                self.show_message("Éxito", "Cuenta creada correctamente", "info")
-            except Exception as e:
-                logger.error(f"Error creando cuenta para trabajador: {e}")
-                self.show_message("Error", f"No se pudo crear la cuenta: {str(e)}", "error")
-
-        def _crear_cuenta_seleccionada(self):
-            """Crear cuenta para el trabajador seleccionado en la tabla"""
-            selected = self.table.get_selected_item()
-            if not selected:
-                self.show_message("Advertencia", "Seleccione un trabajador para crear cuenta", "warning")
-                return
-
-            trabajador_id = selected['id']
-            trabajador = next((t for t in self.trabajadores if t.id == trabajador_id), None)
-            if not trabajador:
-                self.show_message("Error", "Trabajador no encontrado", "error")
-                return
-
+        if utils.show_message(self, f"Crear cuenta para {trabajador.nombre}", "¿Desea crear una cuenta de usuario para este trabajador?", "question"):
             self._crear_cuenta_para_trabajador(trabajador)
+
+    def _crear_cuenta_para_trabajador(self, trabajador):
+        """Mostrar modal para crear cuenta y llamar a AuthService.crear_usuario"""
+        fields = [
+            {'name': 'username', 'label': 'Nombre de usuario *', 'type': 'entry', 'required': True, 'value': trabajador.rut.replace('.', '').replace('-', '')[:12]},
+            {'name': 'password', 'label': 'Contraseña *', 'type': 'password', 'required': True},
+            {'name': 'rol', 'label': 'Rol', 'type': 'combobox', 'values': ['trabajador', 'admin'], 'required': True, 'value': 'trabajador'}
+        ]
+
+        modal = InputModal(self, f"Crear cuenta para {trabajador.nombre}", fields)
+        result = modal.show()
+        if not result:
+            return
+
+        try:
+            usuario = Usuario(
+                username=result['username'],
+                nombre=f"{trabajador.nombre} {trabajador.apellido}",
+                email=trabajador.email or '',
+                rol=result.get('rol', 'trabajador'),
+                activo=True
+            )
+            AuthService.crear_usuario(usuario, result['password'])
+            self.show_message("Éxito", "Cuenta creada correctamente", "info")
+        except Exception as e:
+            logger.error(f"Error creando cuenta para trabajador: {e}")
+            self.show_message("Error", f"No se pudo crear la cuenta: {str(e)}", "error")
+
+    def _crear_cuenta_seleccionada(self):
+        """Crear cuenta para el trabajador seleccionado en la tabla"""
+        selected = self.table.get_selected_item()
+        if not selected:
+            self.show_message("Advertencia", "Seleccione un trabajador para crear cuenta", "warning")
+            return
+
+        trabajador_id = selected['id']
+        trabajador = next((t for t in self.trabajadores if t.id == trabajador_id), None)
+        if not trabajador:
+            self.show_message("Error", "Trabajador no encontrado", "error")
+            return
+
+        self._crear_cuenta_para_trabajador(trabajador)
     
     def _desactivar_trabajador(self):
         """Desactivar trabajador seleccionado"""

@@ -13,6 +13,7 @@ from data.seeds.seed_data import SeedData
 
 from ui.login.login_controller import LoginController
 from ui.login.login_view import LoginView
+from ui.styles.theme import apply_theme
 
 from modules.acerca_de.empresa_view import EmpresaView
 from modules.acerca_de.proveedores_view import ProveedoresView
@@ -58,6 +59,12 @@ class DoñaRosaApp:
 
         try:
             self.root.configure(bg="#e9eef2")
+        except Exception:
+            pass
+
+        # Aplicar tema global y responsividad
+        try:
+            apply_theme(self.root)
         except Exception:
             pass
 

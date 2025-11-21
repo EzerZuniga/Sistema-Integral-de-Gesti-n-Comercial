@@ -17,6 +17,15 @@ class CompraView(BaseView):
     
     def _setup_view(self):
         """Configurar vista de compras"""
+        # Verificar permisos: solo admin puede acceder a compras
+        if not (AuthService.get_current_user() and AuthService.get_current_user().rol == 'admin'):
+            try:
+                self.show_message("Acceso denegado", "No tiene permisos para acceder a Compras", "error")
+            except Exception:
+                pass
+            from app.router import router
+            router.navigate_to('dashboard')
+            return
         # Título
         self.create_title("🛒 Registro de Compras", 0, 0, columnspan=2)
         

@@ -78,9 +78,9 @@ class AuthService:
         if cls._current_user.rol == 'admin':
             return True
         
-        # Permisos para vendedor
-        vendedor_permissions = ['ventas', 'consulta']
-        return permission in vendedor_permissions
+        # Permisos para trabajador
+        trabajador_permissions = ['ventas', 'consulta']
+        return permission in trabajador_permissions
     
     @classmethod
     def cambiar_password(cls, current_password: str, new_password: str) -> bool:

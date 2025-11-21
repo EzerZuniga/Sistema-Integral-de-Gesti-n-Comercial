@@ -23,9 +23,9 @@ class CustomTable(ttk.Frame):
         style = ttk.Style()
         style.configure("Table.Treeview", 
                        rowheight=25,
-                       font=("Arial", 10))
+                       font=("Segoe UI", 10))
         style.configure("Table.Treeview.Heading",
-                       font=("Arial", 10, "bold"),
+                       font=("Segoe UI", 10, "bold"),
                        background="#34495e",
                        foreground="white")
         style.map("Table.Treeview.Heading",
@@ -78,7 +78,10 @@ class CustomTable(ttk.Frame):
         
         # Bind eventos
         self.tree.bind("<Double-1>", self._on_double_click)
+        # Right-click selects row and triggers any on_right_click handler
         self.tree.bind("<Button-3>", self._on_right_click)
+        # Allow keyboard navigation
+        self.tree.bind('<Return>', lambda e: self._invoke_selection())
         
     def _create_toolbar(self, parent):
         """Crear barra de herramientas de la tabla"""
@@ -132,7 +135,11 @@ class CustomTable(ttk.Frame):
     def _configure_columns(self):
         """Configurar las columnas de la tabla"""
         for col in self.columns:
-            self.tree.heading(col['id'], text=col['text'])
+            # allow click on heading to sort
+            try:
+                self.tree.heading(col['id'], text=col['text'], command=lambda c=col['id']: self.sort_by_column(c))
+            except Exception:
+                self.tree.heading(col['id'], text=col['text'])
             
             # Configurar ancho de columna
             width = col.get('width', 100)
@@ -153,9 +160,9 @@ class CustomTable(ttk.Frame):
             self.tree.delete(item)
             
         # Insertar datos
-        for row in self.data:
+        for idx, row in enumerate(self.data):
             values = [row.get(col['id'], '') for col in self.columns]
-            
+
             # Formatear valores si hay formateadores
             for i, col in enumerate(self.columns):
                 if 'formatter' in col and values[i]:
@@ -163,8 +170,20 @@ class CustomTable(ttk.Frame):
                         values[i] = col['formatter'](values[i])
                     except Exception:
                         pass
-            
-            self.tree.insert("", "end", values=values, tags=(row.get('_tags', ''),))
+
+            # Preserve any tags provided by the row and add parity tag
+            tags = []
+            provided = row.get('_tags', '')
+            if provided:
+                if isinstance(provided, (list, tuple)):
+                    tags.extend(provided)
+                else:
+                    tags.append(provided)
+
+            parity = 'even' if idx % 2 == 0 else 'odd'
+            tags.append(parity)
+
+            self.tree.insert("", "end", values=values, tags=tuple(tags))
             
         # Aplicar tags si existen
         self._apply_tags()
@@ -222,6 +241,10 @@ class CustomTable(ttk.Frame):
         """Limpiar selección"""
         for item in self.tree.selection():
             self.tree.selection_remove(item)
+        try:
+            self.tree.focus("")
+        except Exception:
+            pass
             
     def refresh(self):
         """Refrescar tabla"""
@@ -258,7 +281,10 @@ class CustomTable(ttk.Frame):
             
     def show_search(self):
         """Mostrar diálogo de búsqueda avanzada"""
-        self.search_entry.focus()
+        try:
+            self.search_entry.focus()
+        except Exception:
+            pass
         
     def _on_search(self, event=None):
         """Manejar búsqueda en tiempo real"""
@@ -302,6 +328,15 @@ class CustomTable(ttk.Frame):
             self.tree.selection_set(item)
             if hasattr(self, 'on_double_click'):
                 self.on_double_click(self.get_selected_item())
+
+    def _invoke_selection(self):
+        """Invoke an action with the currently focused/selected row (Enter key)."""
+        sel = self.get_selected_item()
+        if sel and hasattr(self, 'on_double_click'):
+            try:
+                self.on_double_click(sel)
+            except Exception:
+                pass
                 
     def _on_right_click(self, event):
         """Manejar click derecho (context menu)"""

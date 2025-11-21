@@ -12,6 +12,35 @@ class Environment:
     @property
     def database_path(self):
         return self.base_dir / 'data' / 'bodega.db'
+
+    @property
+    def database_type(self):
+        """Tipo de base de datos: 'sqlite' (por defecto) o 'mysql'"""
+        return os.getenv('APP_DB_TYPE', 'sqlite').lower()
+
+    # Parámetros para MySQL (si se usa)
+    @property
+    def mysql_host(self):
+        return os.getenv('APP_DB_HOST', 'localhost')
+
+    @property
+    def mysql_port(self):
+        try:
+            return int(os.getenv('APP_DB_PORT', '3306'))
+        except Exception:
+            return 3306
+
+    @property
+    def mysql_user(self):
+        return os.getenv('APP_DB_USER', 'root')
+
+    @property
+    def mysql_password(self):
+        return os.getenv('APP_DB_PASSWORD', '')
+
+    @property
+    def mysql_database(self):
+        return os.getenv('APP_DB_NAME', 'donarosa')
     
     @property
     def logs_path(self):

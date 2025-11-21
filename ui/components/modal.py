@@ -37,6 +37,17 @@ class Modal:
         
         # Botones
         self._create_buttons(main_frame)
+        # Bind keyboard shortcuts: Esc -> cancel, Enter -> accept
+        try:
+            self.modal.bind('<Escape>', lambda e: self._on_cancel())
+            self.modal.bind('<Return>', lambda e: self._on_accept())
+        except Exception:
+            pass
+        # Focus first input shortly after creation
+        try:
+            self.modal.after(30, lambda: self._focus_first_input())
+        except Exception:
+            pass
     
     def _create_buttons(self, parent):
         """Crear botones del modal"""
@@ -65,6 +76,11 @@ class Modal:
             width=12
         )
         accept_btn.pack(side="right", padx=(8, 12), ipadx=6, ipady=4)
+        # Focus por defecto en el botón aceptar para accesibilidad
+        try:
+            accept_btn.focus_set()
+        except Exception:
+            pass
     
     def _on_accept(self):
         """Manejar aceptación del modal"""
@@ -89,6 +105,20 @@ class Modal:
         """Mostrar modal y esperar resultado"""
         self.modal.wait_window()
         return self.result
+
+    def _focus_first_input(self):
+        """Poner foco en el primer input disponible dentro del modal."""
+        try:
+            for child in self.content_frame.winfo_children():
+                # Widgets de entrada comunes
+                if isinstance(child, (ttk.Entry, tk.Entry, ttk.Combobox)):
+                    try:
+                        child.focus_set()
+                        return
+                    except Exception:
+                        pass
+        except Exception:
+            pass
 
 class ConfirmModal(Modal):
     """Modal de confirmación simple"""

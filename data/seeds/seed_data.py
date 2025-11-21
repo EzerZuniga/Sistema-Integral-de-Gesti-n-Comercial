@@ -70,11 +70,11 @@ class SeedData:
                 'rol': 'admin'
             },
             {
-                'username': 'vendedor',
-                'password': 'vendedor123',
-                'nombre': 'Vendedor Principal',
+                'username': 'trabajador',
+                'password': 'trabajador123',
+                'nombre': 'Trabajador Principal',
                 'email': 'ventas@bodegadonarosa.cl',
-                'rol': 'vendedor'
+                'rol': 'trabajador'
             }
         ]
         

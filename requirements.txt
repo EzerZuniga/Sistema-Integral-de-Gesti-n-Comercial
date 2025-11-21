@@ -18,3 +18,6 @@ six==1.17.0
 # Notas:
 # - Este archivo está generado automáticamente con los paquetes detectados en el entorno.
 # - Ajusta versiones según sea necesario para despliegue o entorno virtual.
+
+# Driver opcional para MySQL
+PyMySQL==1.0.3

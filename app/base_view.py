@@ -4,6 +4,10 @@ from typing import Optional, Dict, Any
 from core.logger import logger
 from core.utils import utils
 from app.app_context import app_context
+try:
+    from ui.styles.theme import PALETTE
+except Exception:
+    PALETTE = {'bg': '#f5f7f9', 'panel': '#ffffff', 'muted': '#9aa3ab'}
 
 class BaseView(ttk.Frame):
     """Vista base para todas las pantallas de la aplicación"""
@@ -25,24 +29,34 @@ class BaseView(ttk.Frame):
     def _create_style(self):
         """Crear estilos para la vista"""
         style = ttk.Style()
-        
-        # Estilo principal
-        style.configure("Main.TFrame", background="#f5f5f5")
-        style.configure("Title.TLabel", font=("Arial", 16, "bold"), background="#f5f5f5")
-        style.configure("Subtitle.TLabel", font=("Arial", 12, "bold"), background="#f5f5f5")
-        style.configure("Normal.TLabel", font=("Arial", 10), background="#f5f5f5")
-        
-        # Botones
-        style.configure("Primary.TButton", font=("Arial", 10, "bold"))
-        style.configure("Success.TButton", font=("Arial", 10, "bold"))
-        style.configure("Danger.TButton", font=("Arial", 10, "bold"))
-        style.configure("Secondary.TButton", font=("Arial", 10))
-        
-        # Entradas
-        style.configure("Input.TEntry", font=("Arial", 10))
-        
-        # Combobox
-        style.configure("Custom.TCombobox", font=("Arial", 10))
+        # Only configure minimal fallback styles if not set by the global theme
+        try:
+            if not style.lookup('Main.TFrame', 'background'):
+                style.configure('Main.TFrame', background=PALETTE.get('bg', '#f5f7f9'))
+
+            if not style.lookup('Title.TLabel', 'font'):
+                style.configure('Title.TLabel', font=("Segoe UI", 16, "bold"), background=PALETTE.get('bg', '#f5f7f9'))
+
+            if not style.lookup('Subtitle.TLabel', 'font'):
+                style.configure('Subtitle.TLabel', font=("Segoe UI", 12, "bold"), background=PALETTE.get('bg', '#f5f7f9'))
+
+            if not style.lookup('Normal.TLabel', 'font'):
+                style.configure('Normal.TLabel', font=("Segoe UI", 10), background=PALETTE.get('bg', '#f5f7f9'))
+
+            # Buttons: keep only font fallback
+            if not style.lookup('Primary.TButton', 'font'):
+                style.configure('Primary.TButton', font=("Segoe UI", 10, "bold"))
+            if not style.lookup('Secondary.TButton', 'font'):
+                style.configure('Secondary.TButton', font=("Segoe UI", 10))
+
+            if not style.lookup('Input.TEntry', 'font'):
+                style.configure('Input.TEntry', font=("Segoe UI", 10))
+
+            if not style.lookup('Custom.TCombobox', 'font'):
+                style.configure('Custom.TCombobox', font=("Segoe UI", 10))
+        except Exception:
+            # Silently ignore any theme engine limitations
+            pass
     
     def _setup_view(self):
         """Configuración inicial de la vista (debe ser implementado por subclases)"""

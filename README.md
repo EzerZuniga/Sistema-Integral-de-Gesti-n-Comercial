@@ -36,3 +36,19 @@ Notas:
 - No eliminé los archivos originales en la raíz; si quieres que borre los archivos raíz antiguos (para evitar duplicados) lo hago en la siguiente iteración.
 
 Si quieres que complete más componentes (por ejemplo, todas las vistas en `src/ui/views_*`, separar componentes `buttons/dialogs/tables` o mover `assets/` dentro de `src/`), dime y lo hago. También puedo ejecutar la app aquí para comprobar arranque (necesito confirmación para abrir ventanas en tu máquina).
+
+## Mejoras UI/UX aplicadas
+
+- **Tema centralizado:** se agregó `ui/styles/theme.py` que unifica paleta, tipografías y estilos ttk.
+- **Responsividad básica:** el tema escala fuentes según tamaño de ventana y las vistas usan reglas para centrado y tamaños máximos.
+- **Consistencia de componentes:** los botones, tablas y modales usan estilos ttk homogéneos para apariencia profesional.
+
+Cómo probar:
+
+```powershell
+# Activar entorno virtual si usas uno
+& ".\.venv\Scripts\Activate.ps1"
+python main.py
+```
+
+Si quieres que aplique un rediseño visual más agresivo (íconos vectoriales, paleta alternativa, modo oscuro automático o layout flotante), indícame el objetivo visual y lo implemento.

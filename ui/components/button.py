@@ -51,37 +51,69 @@ class CustomButton(ttk.Button):
     def _setup_tooltip(self):
         """Configurar tooltip"""
         self.tooltip = None
-        self.bind("<Enter>", self._show_tooltip)
+        # show tooltip after short delay to avoid flicker
+        self._tooltip_after_id = None
+        self.bind("<Enter>", self._schedule_tooltip)
         self.bind("<Leave>", self._hide_tooltip)
+
+    def _schedule_tooltip(self, event=None):
+        if self.tooltip_text and self._state != "disabled":
+            # schedule show after 250ms
+            try:
+                self._tooltip_after_id = self.after(250, self._show_tooltip)
+            except Exception:
+                # fallback immediate
+                self._show_tooltip()
         
     def _show_tooltip(self, event=None):
         """Mostrar tooltip"""
-        if self.tooltip_text and self._state != "disabled":
-            x, y, _, _ = self.bbox("insert")
-            x += self.winfo_rootx() + 25
-            y += self.winfo_rooty() + 25
-            
-            self.tooltip = tk.Toplevel(self)
-            self.tooltip.wm_overrideredirect(True)
-            self.tooltip.wm_geometry(f"+{x}+{y}")
-            
-            label = tk.Label(
-                self.tooltip,
-                text=self.tooltip_text,
-                bg="#F9C846",
-                fg="#2E2E2E",
-                relief="solid",
-                bd=1,
-                padx=6,
-                pady=3,
-                font=("Segoe UI", 9)
-            )
-            label.pack()
+        # cancel scheduled show if cancelled
+        try:
+            if hasattr(self, '_tooltip_after_id') and self._tooltip_after_id:
+                self.after_cancel(self._tooltip_after_id)
+                self._tooltip_after_id = None
+        except Exception:
+            pass
+
+        if not (self.tooltip_text and self._state != "disabled"):
+            return
+
+        # position near pointer to be robust across widgets
+        px = self.winfo_pointerx()
+        py = self.winfo_pointery()
+
+        self.tooltip = tk.Toplevel(self)
+        self.tooltip.wm_overrideredirect(True)
+        # small offset to avoid covering the cursor
+        self.tooltip.wm_geometry(f"+{px+12}+{py+20}")
+
+        label = tk.Label(
+            self.tooltip,
+            text=self.tooltip_text,
+            bg="#F9C846",
+            fg="#2E2E2E",
+            relief="solid",
+            bd=1,
+            padx=6,
+            pady=3,
+            font=("Segoe UI", 9)
+        )
+        label.pack()
             
     def _hide_tooltip(self, event=None):
         """Ocultar tooltip"""
+        try:
+            if hasattr(self, '_tooltip_after_id') and self._tooltip_after_id:
+                self.after_cancel(self._tooltip_after_id)
+                self._tooltip_after_id = None
+        except Exception:
+            pass
+
         if self.tooltip:
-            self.tooltip.destroy()
+            try:
+                self.tooltip.destroy()
+            except Exception:
+                pass
             self.tooltip = None
             
     def set_text(self, text: str):
@@ -106,7 +138,7 @@ class CustomButton(ttk.Button):
         self.config(state=state)
         # actualizar estilo visual cuando está deshabilitado
         try:
-            if state in ("disabled", "disabled"):
+            if state == "disabled":
                 cur = self.cget("style")
                 # si existe variante .Disabled, aplicarla
                 disabled_style = f"{cur}.Disabled"
@@ -154,12 +186,16 @@ class CustomButton(ttk.Button):
             hover = f"{cur}.Hover"
             style = ttk.Style()
             # si la variante hover fue registrada, aplicarla
-            if hover in style.element_names() or True:
-                # intentar aplicar hover style; si no existe, cambiar relief
+            if hover in style.element_names():
                 try:
                     self.config(style=hover)
                 except Exception:
                     self.config(cursor="hand2")
+            else:
+                try:
+                    self.config(cursor="hand2")
+                except Exception:
+                    pass
         except Exception:
             pass
 
@@ -190,11 +226,17 @@ class CustomButton(ttk.Button):
             s.configure('Primary.TButton.Hover', background='#2566b8', foreground='#FFFFFF')
             s.configure('Primary.TButton.Disabled', background='#9fb7e0', foreground='#ffffff')
 
-            # Secondary
-            s.configure('Secondary.TButton', background='#2E7D32', foreground='#FFFFFF', padding=6)
-            s.map('Secondary.TButton', background=[('active', '#276a2c'), ('disabled', '#9fb7e0')])
-            s.configure('Secondary.TButton.Hover', background='#276a2c', foreground='#FFFFFF')
-            s.configure('Secondary.TButton.Disabled', background='#9fb7e0', foreground='#ffffff')
+            # Secondary (neutral / menu)
+            s.configure('Secondary.TButton', background='#1a252f', foreground='#FFFFFF', padding=6)
+            s.map('Secondary.TButton', background=[('active', '#0f1417'), ('disabled', '#5f6b73')])
+            s.configure('Secondary.TButton.Hover', background='#0f1417', foreground='#FFFFFF')
+            s.configure('Secondary.TButton.Disabled', background='#5f6b73', foreground='#ffffff')
+
+            # Success / Danger
+            s.configure('Success.TButton', background='#2E7D32', foreground='#FFFFFF', padding=6)
+            s.map('Success.TButton', background=[('active', '#219a52'), ('disabled', '#9fb7e0')])
+            s.configure('Danger.TButton', background='#DC3545', foreground='#FFFFFF', padding=6)
+            s.map('Danger.TButton', background=[('active', '#c0392b'), ('disabled', '#e6a1a6')])
         except Exception:
             # algunos temas no permiten configurar ciertas propiedades; ignorar fallos
             pass

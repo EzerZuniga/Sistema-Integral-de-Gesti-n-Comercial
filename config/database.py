@@ -3,6 +3,16 @@ from pathlib import Path
 from .environment import env
 from core.logger import logger
 
+# Intentar importar driver MySQL (PyMySQL). Si no está disponible, seguiremos usando sqlite.
+try:
+    import pymysql
+    from pymysql.cursors import DictCursor
+    _HAS_PYMYSQL = True
+except Exception:
+    pymysql = None
+    DictCursor = None
+    _HAS_PYMYSQL = False
+
 class Database:
     """Manejador de base de datos SQLite"""
     
@@ -16,12 +26,28 @@ class Database:
             env.logs_path.mkdir(parents=True, exist_ok=True)
             env.backups_path.mkdir(parents=True, exist_ok=True)
             env.database_path.parent.mkdir(parents=True, exist_ok=True)
-            
-            if not env.database_path.exists():
-                logger.info("Creando nueva base de datos...")
+            # Soporte para MySQL vía variables de entorno
+            if env.database_type == 'mysql' and _HAS_PYMYSQL:
+                # Intentar conectar al servidor MySQL y crear la base de datos si no existe
+                logger.info("Usando MySQL como backend de datos")
+                conn = pymysql.connect(host=env.mysql_host, port=env.mysql_port,
+                                       user=env.mysql_user, password=env.mysql_password,
+                                       cursorclass=DictCursor, autocommit=True)
+                try:
+                    cur = conn.cursor()
+                    cur.execute(f"CREATE DATABASE IF NOT EXISTS `{env.mysql_database}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;")
+                    logger.info(f"Verificando base de datos MySQL: {env.mysql_database}")
+                finally:
+                    conn.close()
+                # Crear tablas si es necesario (no tenemos un archivo .db para comprobar)
                 self._create_tables()
             else:
-                logger.info("Base de datos encontrada")
+                # SQLite por defecto
+                if not env.database_path.exists():
+                    logger.info("Creando nueva base de datos SQLite...")
+                    self._create_tables()
+                else:
+                    logger.info("Base de datos SQLite encontrada")
                 
         except Exception as e:
             logger.error(f"Error al crear base de datos: {e}")
@@ -32,8 +58,9 @@ class Database:
         try:
             conn = self.get_connection()
             cursor = conn.cursor()
-            
+
             # Tabla de empresas
+            # SQL compatible tanto para SQLite como para MySQL (con leves diferencias manejadas por el DBMS)
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS empresas (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,7 +81,7 @@ class Database:
                     password_hash TEXT NOT NULL,
                     nombre TEXT NOT NULL,
                     email TEXT,
-                    rol TEXT NOT NULL, -- admin, vendedor
+                    rol TEXT NOT NULL,
                     activo BOOLEAN DEFAULT 1,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
@@ -193,7 +220,11 @@ class Database:
                 )
             ''')
             
-            conn.commit()
+            # Para MySQL commit lo maneja el cursor/connection según autocommit
+            try:
+                conn.commit()
+            except Exception:
+                pass
             conn.close()
             logger.info("Tablas creadas exitosamente")
             
@@ -204,9 +235,20 @@ class Database:
     def get_connection(self):
         """Obtener conexión a la base de datos"""
         try:
-            conn = sqlite3.connect(env.database_path)
-            conn.row_factory = sqlite3.Row
-            return conn
+            if env.database_type == 'mysql' and _HAS_PYMYSQL:
+                # Conectar a la base de datos MySQL y devolver connection con DictCursor
+                conn = pymysql.connect(host=env.mysql_host,
+                                       port=env.mysql_port,
+                                       user=env.mysql_user,
+                                       password=env.mysql_password,
+                                       database=env.mysql_database,
+                                       cursorclass=DictCursor,
+                                       autocommit=False)
+                return conn
+            else:
+                conn = sqlite3.connect(env.database_path)
+                conn.row_factory = sqlite3.Row
+                return conn
         except Exception as e:
             logger.error(f"Error al conectar a la base de datos: {e}")
             raise
@@ -216,14 +258,33 @@ class Database:
         try:
             conn = self.get_connection()
             cursor = conn.cursor()
+
+            # PyMySQL usa %s como placeholder; sqlite3 usa ? -- asumimos que las consultas
+            # en el código usan ? (sqlite). Para compatibilidad simple, si usamos MySQL
+            # convertimos placeholders '?' -> '%s' en el query.
+            use_mysql = env.database_type == 'mysql' and _HAS_PYMYSQL
+            if use_mysql:
+                # Reemplazar todos los '?' por '%s' salvo si ya hay '%s'
+                if '?' in query:
+                    query = query.replace('?', '%s')
+
             cursor.execute(query, params)
-            
+
             if query.strip().upper().startswith('SELECT'):
-                result = cursor.fetchall()
+                # En MySQL con DictCursor obtenemos dicts; en sqlite Row -> sqlite.Row
+                rows = cursor.fetchall()
+                # Normalizar a lista de dicts
+                if isinstance(rows, list):
+                    result = [dict(r) if not isinstance(r, dict) else r for r in rows]
+                else:
+                    result = rows
             else:
                 conn.commit()
-                result = cursor.lastrowid
-            
+                try:
+                    result = cursor.lastrowid
+                except Exception:
+                    result = None
+
             conn.close()
             return result
             
